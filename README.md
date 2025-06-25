@@ -19,6 +19,3 @@ Este repositório reúne uma série de **exercícios práticos** de **desenvolvi
 Contribuições são bem-vindas! Se você tem sugestões de melhorias, novas funcionalidades ou correções de bugs, entre em contato.
 
 ---
-
-**Nota**: Este repositório tem como objetivo guardar as meus desenvolvimentos em desktop utilizando Java.
-
