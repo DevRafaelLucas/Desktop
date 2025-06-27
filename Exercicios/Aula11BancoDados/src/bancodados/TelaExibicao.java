@@ -4,7 +4,6 @@
  */
 package bancodados;
 
-import com.mysql.cj.xdevapi.PreparableStatement;
 import java.beans.PropertyVetoException; // Importa exceção usada para manipulação de janelas internas
 import java.sql.Connection; // Interface de conexão com o banco de dados
 import java.sql.PreparedStatement; // Usado para executar comandos SQL parametrizados
@@ -20,7 +19,7 @@ import javax.swing.table.DefaultTableModel; // Modelo de dados para JTable
  *
  * @author Rafael55957146
  */
-public class TelaExibicao extends javax.swing.JInternalFrame {
+public final class TelaExibicao extends javax.swing.JInternalFrame {
 
     String situacao;
     
@@ -33,7 +32,7 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
         
         tfCodigo.setEnabled(false);
         setMaximum(true);
-        atualizarTabela(); // vai atualizar todos os dados da tabela
+        atualizarTabela(); 
         
     }
     
@@ -55,17 +54,30 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
                 rs.getString("denominacao"), 
                 rs.getString("quantidade_estoque"),
                 rs.getString("preco"), 
-                rs.getString("situacao"),
-                   
+                rs.getString("situacao")
+                  
                 };
-                rs.close();
-                stmt.close();
-                con.close();
-            
+                tabelaResultado.addRow(dados);
             }
+            
+            stmt.close();
+            con.close();
+            rs.close();
+            
         } catch (SQLException ex) {
             Logger.getLogger(TelaExibicao.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void resetarDados() {
+    tfCodigo.setText(null);
+    tfDenominacao.setText(null);
+    tfQuantidadeEstoque.setText(null);
+    tfPreco.setText(null);
+    rbSituacao.clearSelection();
+    
+    
+    
     }
     
 
@@ -117,7 +129,7 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
 
         lbPreco.setText("Preço");
 
-        lbSituacao.setText("situação");
+        lbSituacao.setText("Situação:");
 
         tfCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -153,6 +165,11 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
         rbAtivo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 rbAtivoItemStateChanged(evt);
+            }
+        });
+        rbAtivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbAtivoActionPerformed(evt);
             }
         });
 
@@ -202,6 +219,11 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
                 btnAlterarItemStateChanged(evt);
             }
         });
+        btnAlterar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAlterarMouseClicked(evt);
+            }
+        });
         btnAlterar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAlterarActionPerformed(evt);
@@ -246,36 +268,41 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
         painel2Layout.setHorizontalGroup(
             painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(painel2Layout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(painel2Layout.createSequentialGroup()
-                        .addComponent(lbPreco)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfPreco))
+                        .addGap(44, 44, 44)
+                        .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(painel2Layout.createSequentialGroup()
+                                .addComponent(lbCodigo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painel2Layout.createSequentialGroup()
+                                .addComponent(lbQuantidadeEstoque)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfQuantidadeEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painel2Layout.createSequentialGroup()
+                                .addComponent(lbDenominacao)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfDenominacao, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(painel2Layout.createSequentialGroup()
+                                .addComponent(lbSituacao)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rbAtivo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(rbInativo))
+                            .addGroup(painel2Layout.createSequentialGroup()
+                                .addComponent(lbPreco)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(tfPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(painel2Layout.createSequentialGroup()
-                        .addComponent(lbQuantidadeEstoque)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfQuantidadeEstoque))
-                    .addGroup(painel2Layout.createSequentialGroup()
-                        .addComponent(lbDenominacao)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfDenominacao))
-                    .addGroup(painel2Layout.createSequentialGroup()
-                        .addComponent(lbCodigo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(painel2Layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(lbSituacao)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rbAtivo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rbInativo))
-                    .addComponent(btnAlterar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnCadastrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(56, 56, 56)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1085, Short.MAX_VALUE))
+                        .addGap(76, 76, 76)
+                        .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(btnAlterar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnExcluir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1116, Short.MAX_VALUE))
         );
         painel2Layout.setVerticalGroup(
             painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -296,19 +323,19 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
                 .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbPreco)
                     .addComponent(tfPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(55, 55, 55)
-                .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rbAtivo)
-                    .addComponent(rbInativo)
-                    .addComponent(lbSituacao))
                 .addGap(18, 18, 18)
+                .addGroup(painel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbSituacao)
+                    .addComponent(rbAtivo)
+                    .addComponent(rbInativo))
+                .addGap(44, 44, 44)
                 .addComponent(btnCadastrar)
                 .addGap(18, 18, 18)
                 .addComponent(btnAlterar)
                 .addGap(18, 18, 18)
                 .addComponent(btnExcluir)
-                .addContainerGap(54, Short.MAX_VALUE))
-            .addComponent(jScrollPane1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -326,12 +353,27 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        
+
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnExcluirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExcluirMouseClicked
-        Connection con = ConexaoMysql.conexaoBanco();
-        String sql = "DELETE FROM "
+        Connection con;
+        try {
+            con = ConexaoMysql.conexaoBanco();
+            String sql = "DELETE FROM produto WHERE id_produto = ?";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, tfCodigo.getText());
+            stmt.execute();
+            JOptionPane.showMessageDialog(null, "Produto deletado!");
+            stmt.close();
+            con.close();
+            atualizarTabela();
+            resetarDados();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaExibicao.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }
     }//GEN-LAST:event_btnExcluirMouseClicked
 
     private void btnExcluirItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_btnExcluirItemStateChanged
@@ -339,45 +381,33 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnExcluirItemStateChanged
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
-        
+
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnAlterarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_btnAlterarItemStateChanged
-        try {
-            Connection con = ConexaoMysql.conexaoBanco();
-            String sql = "UPDATE produto SET denominacao = ?, quantidade_estoque = ?, preco = ?"
-            +  "situacao = ? WHERE id_produto = ?; ";
-            PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setString(1, tfCodigo.getText());
-            stmt.setString(2, tfDenominacao.getText());
-            stmt.setString(3, tfQuantidadeEstoque.getText());
-            stmt.setString(4, tfPreco.getText());
-            stmt.execute();
-
-        } catch (SQLException ex) {
-            Logger.getLogger(TelaExibicao.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
     }//GEN-LAST:event_btnAlterarItemStateChanged
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        
+
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnCadastrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCadastrarMouseClicked
         try {
             Connection con = ConexaoMysql.conexaoBanco();
-            String sql = "INSERT INTO produto(denominacao, quantidade_estoque, preco)"
-            + "VALUES(?,?,?);";
+            String sql = "INSERT INTO produto(denominacao, quantidade_estoque, preco, situacao)"
+            + "VALUES(?,?,?,?);";
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, tfDenominacao.getText());
             stmt.setString(2, tfQuantidadeEstoque.getText());
             stmt.setString(3, tfPreco.getText());
+            stmt.setString(4, situacao);
             stmt.execute();
-            JOptionPane.showMessageDialog(null, "Cadastro"+ tfDenominacao.class.getName()
-                +tfDenominacao.getText()+" efetuado com sucesso!!!");
-
+            JOptionPane.showMessageDialog(null, "Cadastro efetuado com sucesso!!!");
             stmt.close();
             con.close();
+            atualizarTabela();
+            resetarDados();
 
         } catch (SQLException ex) {
             Logger.getLogger(TelaExibicao.class.getName()).log(Level.SEVERE, null, ex);
@@ -385,7 +415,7 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnCadastrarMouseClicked
 
     private void btnCadastrarItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_btnCadastrarItemStateChanged
-        
+
     }//GEN-LAST:event_btnCadastrarItemStateChanged
 
     private void tabelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaMouseClicked
@@ -393,23 +423,39 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
         tfDenominacao.setText(tabela.getValueAt(tabela.getSelectedRow(), 1).toString());
         tfQuantidadeEstoque.setText(tabela.getValueAt(tabela.getSelectedRow(), 2).toString());
         tfPreco.setText(tabela.getValueAt(tabela.getSelectedRow(), 3).toString());
-
+        situacao = tabela.getValueAt(tabela.getSelectedRow(), 4).toString();
+        
         if (situacao.equals("A")) {
             rbAtivo.setSelected(true);
-            rbInativo.setSelected(false);
 
-        } else if(situacao.equals("I")) {
+        } else if (situacao.equals("I")) {
             rbInativo.setSelected(true);
-            rbAtivo.setSelected(false);
+
         }
     }//GEN-LAST:event_tabelaMouseClicked
 
+    private void rbAtivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAtivoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbAtivoActionPerformed
+
     private void rbAtivoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rbAtivoItemStateChanged
         situacao = "A";
+
+        if (rbAtivo.isSelected()) {
+            rbInativo.setSelected(false);
+        }
     }//GEN-LAST:event_rbAtivoItemStateChanged
+
+    private void rbInativoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbInativoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbInativoActionPerformed
 
     private void rbInativoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_rbInativoItemStateChanged
         situacao = "I";
+
+        if (rbInativo.isSelected()) {
+            rbAtivo.setSelected(false);
+        }
     }//GEN-LAST:event_rbInativoItemStateChanged
 
     private void tfQuantidadeEstoqueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfQuantidadeEstoqueActionPerformed
@@ -428,9 +474,27 @@ public class TelaExibicao extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfPrecoActionPerformed
 
-    private void rbInativoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbInativoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rbInativoActionPerformed
+    private void btnAlterarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAlterarMouseClicked
+        try {
+            Connection con = ConexaoMysql.conexaoBanco();
+            String sql = "UPDATE produto SET denominacao = ?, quantidade_estoque = ?, preco = ?, situacao = ? WHERE id_produto = ?; ";
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, tfDenominacao.getText());
+            stmt.setString(2, tfQuantidadeEstoque.getText());
+            stmt.setString(3, tfPreco.getText());
+            stmt.setString(4, situacao);
+            stmt.setString(5, tfCodigo.getText());
+            stmt.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Dados do produto atualizados!");
+            stmt.close();
+            con.close();
+            atualizarTabela();
+            resetarDados();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(TelaExibicao.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnAlterarMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

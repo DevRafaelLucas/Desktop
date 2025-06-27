@@ -19,6 +19,8 @@ public class TelaIInicial extends javax.swing.JFrame {
      */
     public TelaIInicial() {
         initComponents();
+        
+        setExtendedState(MAXIMIZED_BOTH); // Maximizando tela
     }
 
     /**
